@@ -1,0 +1,15 @@
+### Advent of Code ###
+input.txt
+
+### Gradle ###
+.gradle
+build
+
+### IntelliJ IDEA ###
+.idea
+
+### Kotlin ###
+.kotlin
+
+### Mac OS ###
+.DS_Store
