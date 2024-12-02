@@ -10,3 +10,4 @@ before and don't know if will finish this time.
 ## Solutions
 
 - [Day1](src/main/kotlin/day1/Day1.kt)
+- [Day2](src/main/kotlin/day2/Day2.kt)

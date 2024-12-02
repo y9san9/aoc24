@@ -9,3 +9,11 @@ inline fun <T> ProgramContext<T>.inputLines(
         file.useLines(block = block)
     }
 }
+
+inline fun <T> ProgramContext<T>.inputNumberLines(
+    crossinline block: (Sequence<Int>) -> T
+) {
+    inputLines { sequence ->
+        block(sequence.map { string -> string.toInt() })
+    }
+}
