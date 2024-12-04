@@ -81,7 +81,7 @@ inline fun <T> program(
 
     val example = program.input(exampleFile)
 
-    val input = if (inputFile.exists()) {
+    val input = if (inputFile.exists() && inputFile.length() != 0L) {
         program.input(inputFile)
     } else {
         null

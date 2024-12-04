@@ -1,5 +1,19 @@
 package me.y9san9.aoc24.grid
 
+inline fun <T> Grid(
+    sizeX: Int,
+    sizeY: Int,
+    init: (Int, Int) -> T
+): Grid<T> {
+    val list = List(sizeX) { x ->
+        List(sizeY) { y ->
+            init(x, y)
+        }
+    }
+    return Grid(Grid.Rows(list))
+}
+
+// todo: deprecate grid in favour of Region
 class Grid<out T> {
     val rows: Rows<T>
     val columns: Columns<T>
@@ -35,6 +49,10 @@ class Grid<out T> {
         return columns[x][y]
     }
 
+    fun getOrNull(x: Int, y: Int): T? {
+        return columns.data.getOrNull(x)?.getOrNull(y)
+    }
+
     fun withIndex(): Grid<Indexed<T>> {
         val data = List(sizeY) { y ->
             List(sizeX) { x ->
@@ -44,6 +62,10 @@ class Grid<out T> {
         return Grid(Rows(data))
     }
 
+    fun flatten(): List<T> {
+        return rows.data.flatten()
+    }
+
     inline fun <R> map(transform: (T) -> R): Grid<R> {
         val data = List(sizeY) { y ->
             List(sizeX) { x ->
@@ -51,6 +73,46 @@ class Grid<out T> {
             }
         }
         return Grid(Rows(data))
+    }
+
+    inline fun filter(predicate: (T) -> Boolean): List<T> {
+        return rows.data.flatten().filter(predicate)
+    }
+
+    fun ray(
+        x: Int,
+        y: Int,
+        deltaX: Int,
+        deltaY: Int,
+        size: Int?,
+        step: Int = 1
+    ): List<T> {
+        val grid = this
+
+        return buildList {
+            var currentX = x
+            var currentY = y
+
+            if (size != null) {
+                for (i in 0..<size) {
+                    val element = grid.getOrNull(currentX, currentY) ?: break
+                    add(element)
+                    currentX += deltaX * step
+                    currentY += deltaY * step
+                }
+            } else {
+                while (true) {
+                    val element = grid.getOrNull(currentX, currentY) ?: break
+                    add(element)
+                    currentX += deltaX * step
+                    currentY += deltaY * step
+                }
+            }
+        }
+    }
+
+    fun iterator(): Iterator<T> {
+        return rows.data.flatten().iterator()
     }
 
     fun transpose(): Grid<T> {
@@ -98,4 +160,15 @@ class Grid<out T> {
         operator fun get(i: Int): List<T> = data[i]
         operator fun iterator(): Iterator<List<T>> = data.iterator()
     }
+}
+
+fun Grid<Char>.rayString(
+    x: Int,
+    y: Int,
+    deltaX: Int,
+    deltaY: Int,
+    length: Int?,
+    step: Int = 1
+): String {
+    return ray(x, y, deltaX, deltaY, length, step).joinToString(separator = "")
 }

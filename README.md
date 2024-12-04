@@ -12,3 +12,4 @@ before and don't know if will finish this time.
 - [Day1](src/main/kotlin/day1/Day1.kt)
 - [Day2](src/main/kotlin/day2/Day2.kt)
 - [Day3](src/main/kotlin/day3/Day3.kt)
+- [Day3](src/main/kotlin/day4/Day4.kt)
