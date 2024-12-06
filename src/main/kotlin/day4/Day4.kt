@@ -1,13 +1,13 @@
 package me.y9san9.aoc24.day4
 
-import me.y9san9.aoc24.grid.Grid
-import me.y9san9.aoc24.grid.rayString
-import me.y9san9.aoc24.input.readCharGrid
+import me.y9san9.aoc24.deprecatedgrid.Grid
+import me.y9san9.aoc24.deprecatedgrid.rayString
+import me.y9san9.aoc24.input.readCharGridDeprecated
 import me.y9san9.aoc24.program
 
 fun main() = program<Grid<Char>>(day = 4) {
     input { file ->
-        file.readCharGrid(separator = null)
+        file.readCharGridDeprecated(separator = null)
     }
 
     first {

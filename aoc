@@ -1,0 +1,54 @@
+#!/bin/bash
+
+# Check if the command is 'day' and the second argument is provided
+if [ "$1" != "day" ] || [ -z "$2" ]; then
+    echo "Usage: aoc day <number>"
+    exit 1
+fi
+
+# Extract day number and format it
+DAY_NUM=$(printf "%d" "$2")
+DAY_DIR="./src/main/kotlin/day${DAY_NUM}"
+DAY_FILE="${DAY_DIR}/Day${DAY_NUM}.kt"
+EXAMPLE_FILE="${DAY_DIR}/example.txt"
+INPUT_FILE="${DAY_DIR}/input.txt"
+
+# Create the directory structure
+mkdir -p "$DAY_DIR"
+
+# Generate DayX.kt file
+cat > "$DAY_FILE" <<EOF
+package me.y9san9.aoc24.day${DAY_NUM}
+
+import me.y9san9.aoc24.program
+
+fun main() = program<>(day = ${DAY_NUM}) {
+    input { file ->
+        TODO()
+    }
+
+    first {
+        example = -1
+
+        compute { input ->
+            TODO()
+        }
+    }
+
+    second {
+        example = -1
+
+        compute { input ->
+            TODO()
+        }
+    }
+}
+EOF
+
+# Create empty example.txt and input.txt files
+touch "$EXAMPLE_FILE" "$INPUT_FILE"
+
+echo "Files for day ${DAY_NUM} have been created:"
+echo "  - $DAY_FILE"
+echo "  - $EXAMPLE_FILE"
+echo "  - $INPUT_FILE"

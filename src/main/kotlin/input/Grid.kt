@@ -1,9 +1,10 @@
 package me.y9san9.aoc24.input
 
 import me.y9san9.aoc24.grid.Grid
+import me.y9san9.aoc24.grid.map
 import java.io.File
 
-fun File.readCharGrid(separator: Regex? = Regex("\\s+")): Grid<Char> {
+fun File.readCharGrid(separator: Regex? = null): Grid<Char> {
     return readGrid(separator).map { word -> word.toCharArray().single() }
 }
 

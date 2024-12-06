@@ -1,14 +1,14 @@
 package me.y9san9.aoc24.day2
 
-import me.y9san9.aoc24.grid.Grid
-import me.y9san9.aoc24.input.readIntGrid
+import me.y9san9.aoc24.deprecatedgrid.Grid
+import me.y9san9.aoc24.input.readIntGridDeprecated
 import me.y9san9.aoc24.program
 import kotlin.math.abs
 import kotlin.math.min
 import kotlin.math.sign
 
 fun main() = program<Grid.Rows<Int>>(day = 2) {
-    input { file -> file.readIntGrid().rows }
+    input { file -> file.readIntGridDeprecated().rows }
 
     fun List<Int>.countErrors(): Int {
         var errors = 0

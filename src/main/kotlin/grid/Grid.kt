@@ -1,139 +1,83 @@
 package me.y9san9.aoc24.grid
 
-inline fun <T> Grid(
-    sizeX: Int,
-    sizeY: Int,
-    init: (Int, Int) -> T
-): Grid<T> {
-    val list = List(sizeX) { x ->
-        List(sizeY) { y ->
-            init(x, y)
+inline fun <T> Grid(bounds: Bounds, init: (Coordinate) -> T?): Grid<T> {
+    val map = buildMap<Coordinate, T> {
+        for ((y, row) in bounds.rows()) {
+            for (x in row) {
+                val coordinate = Coordinate(x, y)
+                val value = init(coordinate)
+                if (value != null) {
+                    put(coordinate, value)
+                }
+            }
         }
     }
-    return Grid(Grid.Rows(list))
+    return Grid(bounds, map)
 }
 
-// todo: deprecate grid in favour of Region
-class Grid<out T> {
-    val rows: Rows<T>
-    val columns: Columns<T>
+fun <T> Grid(bounds: Bounds?, map: Map<Coordinate, T>): Grid<T> {
+    return MapGrid(bounds, map)
+}
 
-    constructor(rows: Rows<T>) {
-        this.rows = rows
-
-        val columns = List(rows[0].size) { x ->
-            List(rows.size) { y ->
-                rows[y][x]
-            }
+fun <T> Grid(rows: Grid.Rows<T>): Grid<T> {
+    val map = rows.data.flatMapIndexed { y, row ->
+        row.mapIndexed { x, element ->
+            Coordinate(x, y) to element
         }
+    }.toMap()
 
-        this.columns = Columns(columns)
-    }
+    val bounds = Bounds(
+        sizeX = rows.data.maxOf { row -> row.size },
+        sizeY = rows.size
+    )
 
-    constructor(columns: Columns<T>) {
-        this.columns = columns
+    return Grid(bounds, map)
+}
 
-        val rows = List(columns[0].size) { x ->
-            List(columns.size) { y ->
-                columns[x][y]
-            }
+fun <T> Grid(columns: Grid.Columns<T>): Grid<T> {
+    val map = columns.data.flatMapIndexed { x, row ->
+        row.mapIndexed { y, element ->
+            Coordinate(x, y) to element
         }
+    }.toMap()
 
-        this.rows = Rows(rows)
-    }
+    val bounds = Bounds(
+        sizeX = columns.size,
+        sizeY = columns.data.maxOf { column -> column.size }
+    )
 
-    val sizeX get() = columns.size
-    val sizeY get() = rows.size
+    return Grid(bounds, map)
+}
 
-    operator fun get(x: Int, y: Int): T {
-        return columns[x][y]
-    }
+interface Grid<out T> {
+    val bounds: Bounds?
+    val coordinates: Set<Coordinate>
+    fun getOrNull(coordinate: Coordinate): T?
 
     fun getOrNull(x: Int, y: Int): T? {
-        return columns.data.getOrNull(x)?.getOrNull(y)
+        return getOrNull(Coordinate(x, y))
     }
 
-    fun withIndex(): Grid<Indexed<T>> {
-        val data = List(sizeY) { y ->
-            List(sizeX) { x ->
-                Indexed(x, y, get(x, y))
-            }
-        }
-        return Grid(Rows(data))
+    operator fun get(coordinate: Coordinate): T {
+        if (coordinate !in this) error("Coordinate is out of bounds")
+        return getOrNull(coordinate) ?: error("No such element at $coordinate")
     }
 
-    fun flatten(): List<T> {
-        return rows.data.flatten()
+    operator fun get(x: Int, y: Int): T {
+        return get(Coordinate(x, y))
     }
 
-    inline fun <R> map(transform: (T) -> R): Grid<R> {
-        val data = List(sizeY) { y ->
-            List(sizeX) { x ->
-                transform(get(x, y))
-            }
-        }
-        return Grid(Rows(data))
+    operator fun contains(coordinate: Coordinate): Boolean {
+        return bounds?.contains(coordinate) ?: true
     }
 
-    inline fun filter(predicate: (T) -> Boolean): List<T> {
-        return rows.data.flatten().filter(predicate)
-    }
-
-    fun ray(
-        x: Int,
-        y: Int,
-        deltaX: Int,
-        deltaY: Int,
-        size: Int?,
-        step: Int = 1
-    ): List<T> {
-        val grid = this
-
-        return buildList {
-            var currentX = x
-            var currentY = y
-
-            if (size != null) {
-                for (i in 0..<size) {
-                    val element = grid.getOrNull(currentX, currentY) ?: break
-                    add(element)
-                    currentX += deltaX * step
-                    currentY += deltaY * step
-                }
-            } else {
-                while (true) {
-                    val element = grid.getOrNull(currentX, currentY) ?: break
-                    add(element)
-                    currentX += deltaX * step
-                    currentY += deltaY * step
-                }
+    operator fun iterator(): Iterator<T> {
+        return iterator {
+            for (coordinate in coordinates) {
+                yield(get(coordinate))
             }
         }
     }
-
-    fun iterator(): Iterator<T> {
-        return rows.data.flatten().iterator()
-    }
-
-    fun transpose(): Grid<T> {
-        return Grid(Rows(columns.data))
-    }
-
-    fun pretty(): String = buildString {
-        for (row in rows) {
-            for (element in row) {
-                append(element)
-                append('\t')
-            }
-            appendLine()
-        }
-    }
-
-    data class Indexed<out T>(
-        val x: Int,
-        val y: Int,
-        val data: T
-    )
 
     class Rows<out T>(val data: List<List<T>>) {
         val size get() = data.size
@@ -162,13 +106,6 @@ class Grid<out T> {
     }
 }
 
-fun Grid<Char>.rayString(
-    x: Int,
-    y: Int,
-    deltaX: Int,
-    deltaY: Int,
-    length: Int?,
-    step: Int = 1
-): String {
-    return ray(x, y, deltaX, deltaY, length, step).joinToString(separator = "")
+fun <T> Grid<T>.toMutableGrid(): MutableGrid<T> {
+    return MutableGrid(bounds, coordinates.associateWith(::get))
 }

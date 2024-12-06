@@ -1,13 +1,13 @@
 package me.y9san9.aoc24.day1
 
-import me.y9san9.aoc24.grid.Grid
-import me.y9san9.aoc24.input.readIntGrid
+import me.y9san9.aoc24.deprecatedgrid.Grid
+import me.y9san9.aoc24.input.readIntGridDeprecated
 import me.y9san9.aoc24.program
 import kotlin.math.abs
 import kotlin.math.max
 
 fun main() = program<Grid.Columns<Int>>(day = 1) {
-    input { file -> file.readIntGrid().columns }
+    input { file -> file.readIntGridDeprecated().columns }
 
     first {
         example = 11
