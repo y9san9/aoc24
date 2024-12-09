@@ -34,11 +34,11 @@ class ProgramContext<T> {
     }
 
     class PartContext<T> {
-        var example: Int? = null
+        var example: Any? = null
 
-        private var compute: ((T) -> Int)? = null
+        private var compute: ((T) -> Any)? = null
 
-        fun compute(block: (T) -> Int) {
+        fun compute(block: (T) -> Any) {
             this.compute = block
         }
 
@@ -57,8 +57,8 @@ data class Program<T>(
     val second: Part<T>? = null
 ) {
     data class Part<T>(
-        val example: Int,
-        val compute: (T) -> Int
+        val example: Any,
+        val compute: (T) -> Any
     )
 }
 
@@ -79,19 +79,17 @@ inline fun <T> program(
         error("Provide an example file")
     }
 
-    val example = program.input(exampleFile)
-
-    val input = if (inputFile.exists() && inputFile.length() != 0L) {
-        program.input(inputFile)
-    } else {
-        null
-    }
-
     val first = program.first
     if (first != null) {
+        val example = program.input(exampleFile)
         val exampleActual = first.compute(example)
         if (exampleActual != first.example) {
             silentExit("Part 1: Example calculation didn't match!\nExpected: ${first.example}\nActual: $exampleActual")
+        }
+        val input = if (inputFile.exists() && inputFile.length() != 0L) {
+            program.input(inputFile)
+        } else {
+            null
         }
         if (input == null) {
             println("Part 1: $exampleActual (Example)")
@@ -103,9 +101,15 @@ inline fun <T> program(
 
     val second = program.second
     if (second != null) {
+        val example = program.input(exampleFile)
         val exampleActual = second.compute(example)
         if (exampleActual != second.example) {
             silentExit("Part 2: Example calculation didn't match!\nExpected: ${second.example}\nActual: $exampleActual")
+        }
+        val input = if (inputFile.exists() && inputFile.length() != 0L) {
+            program.input(inputFile)
+        } else {
+            null
         }
         if (input == null) {
             println("Part 2: $exampleActual (Example)")
@@ -115,7 +119,7 @@ inline fun <T> program(
         }
     }
 
-    if (input == null) {
+    if (!inputFile.exists()) {
         println("For the actual data, please put input.txt near the Kotlin file")
         println("Note that distributing inputs publicly is forbidden by AoC License: https://www.reddit.com/r/adventofcode/wiki/faqs/copyright/inputs/")
     }

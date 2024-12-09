@@ -48,7 +48,16 @@ EOF
 # Create empty example.txt and input.txt files
 touch "$EXAMPLE_FILE" "$INPUT_FILE"
 
-echo "Files for day ${DAY_NUM} have been created:"
+# Remove the last line from README.md (must be empty)
+head -n -1 README.md temp.txt
+cat >> "README.md" <<EOF
+- [Day${DAY_NUM}](src/main/kotlin/day${DAY_NUM}/Day${DAY_NUM}.kt)
+EOF
+
+echo "Files for day ${DAY_NUM} have been:"
+echo "Created:"
 echo "  - $DAY_FILE"
 echo "  - $EXAMPLE_FILE"
 echo "  - $INPUT_FILE"
+echo "Modified:"
+echo "  - README.md"
