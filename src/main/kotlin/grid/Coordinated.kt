@@ -20,17 +20,28 @@ data class Coordinated<out T>(
     }
 }
 
-fun <T> Grid<T>.coordinated(): Grid<Coordinated<T>> {
-    val map = coordinates.associateWith { coordinate ->
-        Coordinated(coordinate, get(coordinate))
-    }
-    return Grid(bounds, map)
+fun <T> Grid<T>.coordinated(): CoordinatedGrid<T> {
+    return CoordinatedGrid(raw = this)
 }
 
 fun <T> Grid<Coordinated<T>>.raw(): Grid<T> {
-    return map { (_, element) -> element }
+    return if (this is CoordinatedGrid<T>) raw else map { (_, element) -> element }
 }
 
 fun <T> List<Coordinated<T>>.raw(): List<T> {
     return map { (_, element) -> element }
+}
+
+fun <T> List<Coordinated<T>>.coordinates(): List<Coordinate> {
+    return map { (coordinate) -> coordinate }
+}
+
+
+class CoordinatedGrid<T>(val raw: Grid<T>) : Grid<Coordinated<T>> {
+    override val bounds: Bounds? get() = raw.bounds
+    override val coordinates: Set<Coordinate> get() = raw.coordinates
+    override fun getOrNull(coordinate: Coordinate): Coordinated<T>? {
+        val element = raw.getOrNull(coordinate) ?: return null
+        return Coordinated(coordinate, element)
+    }
 }
