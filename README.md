@@ -15,6 +15,8 @@ before and don't know if will finish this time.
 - [Day4](src/main/kotlin/day4/Day4.kt)
 - [Day5](src/main/kotlin/day5/Day5.kt)
 - [Day6](src/main/kotlin/day6/Day6.kt)
+- [Day7](src/main/kotlin/day7/Day7.kt)
+- Day8 - TBD
 - [Day9](src/main/kotlin/day9/Day9.kt)
 - [Day10](src/main/kotlin/day10/Day10.kt)
 - [Day11](src/main/kotlin/day11/Day11.kt)
