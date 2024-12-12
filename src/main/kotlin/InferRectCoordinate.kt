@@ -1,12 +1,12 @@
 package me.y9san9.aoc24
 
-import me.y9san9.aoc24.grid.Coordinate
+import me.y9san9.aoc24.grid.Point2D
 
 fun inferRectCoordinate(
-    first: Coordinate,
-    second: Coordinate,
-    third: Coordinate
-): Coordinate {
+    first: Point2D,
+    second: Point2D,
+    third: Point2D
+): Point2D {
     val y = if (first.y == second.y) {
         third.y
     } else {
@@ -19,5 +19,5 @@ fun inferRectCoordinate(
         first.x
     }
 
-    return Coordinate(x, y)
+    return Point2D(x, y)
 }

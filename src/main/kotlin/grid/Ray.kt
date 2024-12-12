@@ -1,7 +1,7 @@
 package me.y9san9.aoc24.grid
 
-fun <T> Grid<T>.ray(
-    coordinate: Coordinate,
+fun <T> Grid2D<T>.ray(
+    point: Point2D,
     deltaX: Int,
     deltaY: Int,
     size: Int? = null,
@@ -10,8 +10,8 @@ fun <T> Grid<T>.ray(
     val grid = this
 
     return sequence {
-        var currentX = coordinate.x
-        var currentY = coordinate.y
+        var currentX = point.x
+        var currentY = point.y
 
         if (size != null) {
             for (i in 0..<size) {
@@ -31,12 +31,12 @@ fun <T> Grid<T>.ray(
     }
 }
 
-fun Grid<Char>.rayString(
-    coordinate: Coordinate,
+fun Grid2D<Char>.rayString(
+    point: Point2D,
     deltaX: Int,
     deltaY: Int,
     size: Int? = null,
     step: Int = 1
 ): String {
-    return ray(coordinate, deltaX, deltaY, size, step).joinToString(separator = "")
+    return ray(point, deltaX, deltaY, size, step).joinToString(separator = "")
 }

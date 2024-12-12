@@ -1,10 +1,10 @@
 package me.y9san9.aoc24.day6
 
-import me.y9san9.aoc24.grid.Coordinate
-import me.y9san9.aoc24.grid.Coordinated
-import me.y9san9.aoc24.grid.Grid
+import me.y9san9.aoc24.grid.Point2D
+import me.y9san9.aoc24.grid.Pointed2D
+import me.y9san9.aoc24.grid.Grid2D
 import me.y9san9.aoc24.grid.asSequence
-import me.y9san9.aoc24.grid.coordinated
+import me.y9san9.aoc24.grid.pointed
 import me.y9san9.aoc24.grid.count
 import me.y9san9.aoc24.grid.firstNotNullOf
 import me.y9san9.aoc24.grid.map
@@ -33,8 +33,8 @@ enum class Guard(val dX: Int, val dY: Int) {
     abstract fun rotate(): Guard
 }
 
-data class Lab(val grid: Grid<Coordinated<Char>>) {
-    val guard: Coordinated<Guard> = grid.firstNotNullOf { (coordinate, char) ->
+data class Lab(val grid: Grid2D<Pointed2D<Char>>) {
+    val guard: Pointed2D<Guard> = grid.firstNotNullOf { (coordinate, char) ->
         val guard = when (char) {
             '^' -> Guard.Top
             '>' -> Guard.Right
@@ -42,10 +42,10 @@ data class Lab(val grid: Grid<Coordinated<Char>>) {
             '<' -> Guard.Left
             else -> null
         }
-        if (guard != null) Coordinated(coordinate, guard) else null
+        if (guard != null) Pointed2D(coordinate, guard) else null
     }
 
-    val guardPath: Sequence<Coordinate> = sequence {
+    val guardPath: Sequence<Point2D> = sequence {
         var (coordinate, guard) = guard
         yield(coordinate)
 
@@ -54,7 +54,7 @@ data class Lab(val grid: Grid<Coordinated<Char>>) {
             val obstacle = ray.takeWhile { (_, char) -> char != '#' }
             guard = guard.rotate()
             if (obstacle.size == 1) continue
-            coordinate = obstacle.last().coordinate
+            coordinate = obstacle.last().point
             yield(coordinate)
             if (ray.size == obstacle.size) {
                 break
@@ -69,7 +69,7 @@ data class Lab(val grid: Grid<Coordinated<Char>>) {
 
 fun main() = program<Lab>(day = 6) {
     input { file ->
-        Lab(file.readCharGrid().coordinated())
+        Lab(file.readCharGrid().pointed())
     }
 
     first {
@@ -101,9 +101,9 @@ fun main() = program<Lab>(day = 6) {
             }
 
             grids.count { grid ->
-                val lab = Lab(grid.coordinated())
+                val lab = Lab(grid.pointed())
 
-                val acc = mutableListOf<Coordinate>()
+                val acc = mutableListOf<Point2D>()
 
                 for (coordinate in lab.guardPath) {
                     if (coordinate in acc) {

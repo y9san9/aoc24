@@ -1,79 +1,79 @@
 package me.y9san9.aoc24.grid
 
-inline fun <T> Grid(bounds: Bounds, init: (Coordinate) -> T?): Grid<T> {
-    val map = buildMap<Coordinate, T> {
+inline fun <T> Grid2D(bounds: Bounds2D, init: (Point2D) -> T?): Grid2D<T> {
+    val map = buildMap<Point2D, T> {
         for ((y, row) in bounds.rows()) {
             for (x in row) {
-                val coordinate = Coordinate(x, y)
-                val value = init(coordinate)
+                val point = Point2D(x, y)
+                val value = init(point)
                 if (value != null) {
-                    put(coordinate, value)
+                    put(point, value)
                 }
             }
         }
     }
-    return Grid(bounds, map)
+    return Grid2D(bounds, map)
 }
 
-fun <T> Grid(bounds: Bounds?, map: Map<Coordinate, T>): Grid<T> {
-    return MapGrid(bounds, map)
+fun <T> Grid2D(bounds: Bounds2D?, map: Map<Point2D, T>): Grid2D<T> {
+    return MapGrid2D(bounds, map)
 }
 
-fun <T> Grid(rows: Grid.Rows<T>): Grid<T> {
+fun <T> Grid2D(rows: Grid2D.Rows<T>): Grid2D<T> {
     val map = rows.data.flatMapIndexed { y, row ->
         row.mapIndexed { x, element ->
-            Coordinate(x, y) to element
+            Point2D(x, y) to element
         }
     }.toMap()
 
-    val bounds = Bounds(
+    val bounds = Bounds2D(
         sizeX = rows.data.maxOf { row -> row.size },
         sizeY = rows.size
     )
 
-    return Grid(bounds, map)
+    return Grid2D(bounds, map)
 }
 
-fun <T> Grid(columns: Grid.Columns<T>): Grid<T> {
+fun <T> Grid2D(columns: Grid2D.Columns<T>): Grid2D<T> {
     val map = columns.data.flatMapIndexed { x, row ->
         row.mapIndexed { y, element ->
-            Coordinate(x, y) to element
+            Point2D(x, y) to element
         }
     }.toMap()
 
-    val bounds = Bounds(
+    val bounds = Bounds2D(
         sizeX = columns.size,
         sizeY = columns.data.maxOf { column -> column.size }
     )
 
-    return Grid(bounds, map)
+    return Grid2D(bounds, map)
 }
 
-interface Grid<out T> {
-    val bounds: Bounds?
-    val coordinates: Set<Coordinate>
-    fun getOrNull(coordinate: Coordinate): T?
+interface Grid2D<out T> {
+    val bounds: Bounds2D?
+    val points: Set<Point2D>
+    fun getOrNull(point: Point2D): T?
 
     fun getOrNull(x: Int, y: Int): T? {
-        return getOrNull(Coordinate(x, y))
+        return getOrNull(Point2D(x, y))
     }
 
-    operator fun get(coordinate: Coordinate): T {
-        if (coordinate !in this) error("Coordinate is out of bounds")
-        return getOrNull(coordinate) ?: error("No such element at $coordinate")
+    operator fun get(point: Point2D): T {
+        if (point !in this) error("Coordinate is out of bounds")
+        return getOrNull(point) ?: error("No such element at $point")
     }
 
     operator fun get(x: Int, y: Int): T {
-        return get(Coordinate(x, y))
+        return get(Point2D(x, y))
     }
 
-    operator fun contains(coordinate: Coordinate): Boolean {
-        return bounds?.contains(coordinate) ?: true
+    operator fun contains(point: Point2D): Boolean {
+        return point in points
     }
 
     operator fun iterator(): Iterator<T> {
         return iterator {
-            for (coordinate in coordinates) {
+            for (coordinate in points) {
                 yield(get(coordinate))
             }
         }
@@ -106,6 +106,6 @@ interface Grid<out T> {
     }
 }
 
-fun <T> Grid<T>.toMutableGrid(): MutableGrid<T> {
-    return MutableGrid(bounds, coordinates.associateWith(::get))
+fun <T> Grid2D<T>.toMutableGrid(): MutableGrid2D<T> {
+    return MutableGrid2D(bounds, points.associateWith(::get))
 }

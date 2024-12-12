@@ -20,3 +20,4 @@ before and don't know if will finish this time.
 - [Day9](src/main/kotlin/day9/Day9.kt)
 - [Day10](src/main/kotlin/day10/Day10.kt)
 - [Day11](src/main/kotlin/day11/Day11.kt)
+- [Day12](src/main/kotlin/day12/Day12.kt)

@@ -1,25 +1,25 @@
 package me.y9san9.aoc24.day10
 
-import me.y9san9.aoc24.grid.Coordinated
-import me.y9san9.aoc24.grid.CoordinatedGrid
-import me.y9san9.aoc24.grid.Grid
-import me.y9san9.aoc24.grid.coordinated
+import me.y9san9.aoc24.grid.Pointed2D
+import me.y9san9.aoc24.grid.PointedGrid2D
+import me.y9san9.aoc24.grid.Grid2D
+import me.y9san9.aoc24.grid.pointed
 import me.y9san9.aoc24.grid.filter
 import me.y9san9.aoc24.grid.map
 import me.y9san9.aoc24.grid.plusNeighbours
 import me.y9san9.aoc24.input.readCharGrid
 import me.y9san9.aoc24.program
 
-fun main() = program<Grid<Int>>(day = 10) {
+fun main() = program<Grid2D<Int>>(day = 10) {
     input { file ->
         file.readCharGrid().map(Char::digitToInt)
     }
 
     tailrec fun followPaths(
-        grid: CoordinatedGrid<Int>,
-        paths: List<List<Coordinated<Int>>>,
+        grid: PointedGrid2D<Int>,
+        paths: List<List<Pointed2D<Int>>>,
         i: Int = 0,
-        distinctBy: ((List<Coordinated<Int>>) -> Any?)?
+        distinctBy: ((List<Pointed2D<Int>>) -> Any?)?
     ): Int {
         if (i == 9) return paths.size
 
@@ -46,12 +46,12 @@ fun main() = program<Grid<Int>>(day = 10) {
         example = 36
 
         compute { input ->
-            val trailheadStarts = input.coordinated()
+            val trailheadStarts = input.pointed()
                 .filter { (_, height) -> height == 0 }
                 .map(::listOf)
 
             followPaths(
-                grid = input.coordinated(),
+                grid = input.pointed(),
                 paths = trailheadStarts,
                 distinctBy = { path -> path.first() to path.last() }
             )
@@ -62,12 +62,12 @@ fun main() = program<Grid<Int>>(day = 10) {
         example = 81
 
         compute { input ->
-            val trailheadStarts = input.coordinated()
+            val trailheadStarts = input.pointed()
                 .filter { (_, height) -> height == 0 }
                 .map(::listOf)
 
             followPaths(
-                grid = input.coordinated(),
+                grid = input.pointed(),
                 paths = trailheadStarts,
                 distinctBy = null
             )
